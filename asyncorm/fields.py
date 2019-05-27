@@ -10,7 +10,6 @@ class Field:
         self.dbtype = dbtype
         self.required = required
         self.default = default
-
     def validate(self, value):
         if value is None and not self.required:
             return None
@@ -44,10 +43,15 @@ class DateField(Field):
 
 
 class FloatField(Field):
-    def __init__(self, blank=False, dbtype="FLOAT", required=False, default=None):
+    def __init__(self, blank=False, dbtype="FLOAT", required=False, default=None,references=None):
         super().__init__(float, blank, dbtype, required, default)
 
 
 class BooleanField(Field):
     def __init__(self, blank=False, dbtype="BOOL", required=False, default=None):
         super().__init__(bool, blank, dbtype, required, default)
+
+class ForeignKey(Field):
+    def __init__(self, blank=False,dbtype="INT",required=False, default=None,references=None):
+        self.references=references
+        super().__init__(int, blank,dbtype,required, default)

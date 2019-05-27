@@ -1,7 +1,8 @@
 import warnings
-import asyncio
+
 from asyncorm.db import Database
 from asyncorm.fields import *
+
 db = Database('library')
 
 
@@ -96,15 +97,20 @@ class Model(metaclass=ModelMeta):
     @classmethod
     async def create_table(cls):
         sql_types = {}
+        fk = {}
         for x, y in cls._fields.items():
-            if isinstance(y, Field):
+            if isinstance(y, Field) and (isinstance(y,ForeignKey)==False):
                 sql_types[x] = y.dbtype
                 if y.blank:
                     sql_types[x] += " NULL"
                 else:
-                    sql_types[x] += "NOT NULL"
-        query = "CREATE TABLE IF NOT EXISTS {} (id INT AUTO_INCREMENT, {}, PRIMARY KEY (id));"
-        create_table_query = await db.query_constructor(query, cls, sql_types)
+                    sql_types[x] += " NOT NULL"
+            elif isinstance(y, ForeignKey):
+                sql_types[x] = y.dbtype
+                sql_types[x] += " NOT NULL"
+                fk[x] = y.references.__name__
+        query = "CREATE TABLE IF NOT EXISTS {} (id INT AUTO_INCREMENT, {}, PRIMARY KEY (id){});"
+        create_table_query = await db.query_constructor(query, cls, sql_types, fk)
         print(create_table_query)
         await db.execute(create_table_query)
         await db.commit()
