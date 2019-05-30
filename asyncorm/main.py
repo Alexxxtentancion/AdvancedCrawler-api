@@ -27,12 +27,16 @@ class CrawlerStats(Model):
     avg_time_per_page = FloatField(blank=False)
     max_time_per_page = FloatField(blank=False)
     min_time_per_page = FloatField(blank=False)
-
+import datetime
 async def run():
-    # await User.create_table()
+    await User.create_table()
     # a.save()
+    # await User.objects.create(email='email@email.ru',password='12345',name='Artem'
+    #                           ,created_date=datetime.datetime.now(),last_login_date='2018-09-09')
+    await Token.create_table()
     await CrawlerStats.create_table()
-
+    # a = await User.objects.all()
+    # print(a)
 
 if __name__ == '__main__':
     begin = time()

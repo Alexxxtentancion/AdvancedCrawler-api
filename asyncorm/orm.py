@@ -16,7 +16,6 @@ class ModelMeta(type):
             warnings.warn("Meta is None", Warning)
         else:
             namespace['_table_name'] = meta.table_name
-
         if bases[0] != Model:
             fields = {**bases[0]._fields, **{k: v for k, v in namespace.items()
                                              if isinstance(v, Field)}}
@@ -110,7 +109,7 @@ class Model(metaclass=ModelMeta):
                 sql_types[x] += " NOT NULL"
                 fk[x] = y.references.__name__
         query = "CREATE TABLE IF NOT EXISTS {} (id INT AUTO_INCREMENT, {}, PRIMARY KEY (id){});"
-        create_table_query = await db.query_constructor(query, cls, sql_types, fk)
+        create_table_query = await db.query_constructor(query, cls, sql_types, fk=fk)
         print(create_table_query)
         await db.execute(create_table_query)
         await db.commit()

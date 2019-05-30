@@ -15,15 +15,15 @@ class Field:
             return None
         elif value is None and self.required:
             raise InputError('Need to input required fields in {}s'.format(type(self).__name__))
-        if self.f_type == datetime.date:
-            if isinstance(value, datetime.date):
-                return value.strftime('%Y-%m-%d')
+        if self.f_type == datetime.datetime:
+            if isinstance(value, datetime.datetime):
+                return value.strftime('%Y-%m-%d %H:%M:%S')
             elif isinstance(value, list) or isinstance(value, tuple):
-                return datetime.date(*value).strftime('%Y-%m-%d')
+                return datetime.date(*value).strftime('%Y-%m-%d %H:%M:%S')
             elif isinstance(value, dict):
-                return datetime.date(**value).strftime('%Y-%m-%d')
+                return datetime.date(**value).strftime('%Y-%m-%d %H:%M:%S')
             elif isinstance(value, str):
-                return datetime.datetime.strptime(value, '%Y-%m-%d').strftime('%Y-%m-%d')
+                return datetime.datetime.strptime(value, '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')
         return self.f_type(value)
 
 
@@ -38,8 +38,8 @@ class StringField(Field):
 
 
 class DateField(Field):
-    def __init__(self, blank=False, dbtype="DATE", required=False, default=None):
-        super().__init__(datetime.date, blank, dbtype, required, default)
+    def __init__(self, blank=False, dbtype="DATETIME", required=False, default=None):
+        super().__init__(datetime.datetime, blank, dbtype, required, default)
 
 
 class FloatField(Field):

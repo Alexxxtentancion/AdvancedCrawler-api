@@ -1,14 +1,20 @@
 from aiohttp import web
 import json
 import jwt
-sharable_secret = 'secret'
+import aio_pika
+import pickle
+from asyncorm.utils import connection_loop
+from asyncorm.utils import connection_loop
+from authorization.auth import AuthMs
+auth = AuthMs()
 async def registration(request):
     try:
         email = request.query['email']
         password = request.query['password']
         name = request.query['name']
         response_obj = {'status':'ok','data':{'email':email,'password':password,'name':name}}
-        return web.Response(text=json.dumps(response_obj),status=200)
+        r = await auth.make_request("signup",data=response_obj)
+        return web.Response(text=json.dumps(r),status=200)
     except Exception as e:
         response_obj = {'status': '<400>', 'reason':e}
         return web.Response(text=json.dumps(response_obj), status=500)

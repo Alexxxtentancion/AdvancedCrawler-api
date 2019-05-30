@@ -58,7 +58,7 @@ class Database():
         res_d = [class_(**dict(zip(res_desc, res_tuple[i]))) for i in range(len(res_tuple))]
         return res_d
 
-    async def query_constructor(self, query, table, cond,fk, id=None):
+    async def query_constructor(self, query, table, cond,fk=None, id=None):
         if query.startswith('SELECT'):
             params = ['{}="{}"'.format(x, y) for x, y in cond.items()]
             params = (" AND ".join(params))
