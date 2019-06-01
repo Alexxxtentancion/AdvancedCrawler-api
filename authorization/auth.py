@@ -18,21 +18,22 @@ class AuthMs:
             data = pickle.loads(message.body)
 
             _id = data.get('id')
+            timeout = data.get('timeout')
             if data.get('r_type') == 'signup':
                 try:
-                    r = await asyncio.wait_for(self.signup(data.get('data')), 5)
+                    r = await asyncio.wait_for(self.signup(data.get('data')), timeout)
                     data = {"id": _id, "data": r}
                 except TimeoutError:
                     data = {'status': "500", "data": {}}
             elif data.get('r_type') == 'login':
                 try:
-                    r = await asyncio.wait_for(self.login(data.get('data')), 5)
+                    r = await asyncio.wait_for(self.login(data.get('data')), timeout)
                     data = {"id": _id, "data": r}
                 except TimeoutError:
                     data = {'status': "500", "data": {}}
             elif data.get('r_type') == 'validate':
                 try:
-                    r = await asyncio.wait_for(self.validate(data.get('data').get('token')), 5)
+                    r = await asyncio.wait_for(self.validate(data.get('data').get('token')), timeout)
                     data = {"id": _id, "data": r}
                 except TimeoutError:
                     return {'status': "500", "data": {}}
@@ -46,10 +47,10 @@ class AuthMs:
         await ch.set_qos(prefetch_count=1)
         await i_queue.consume(self.callback_inbound)
 
-    async def make_request(self, r_type, data):
+    async def make_request(self, r_type, data=None,timeout=None):
         id_ = uuid.uuid1()
         await ch.default_exchange.publish(
-            aio_pika.Message(body=pickle.dumps({'r_type': r_type, "data": data, "id": id_.hex})),
+            aio_pika.Message(body=pickle.dumps({'r_type': r_type, "data": data, "id": id_.hex,'timeout':timeout})),
             routing_key='inbound',
         )
         async with o_queue.iterator() as queue_iter:
@@ -114,6 +115,9 @@ class AuthMs:
             if user:
                 print("got")
                 token = await self.create_token(data.get('email'), user, expire_date)
+                await User(id=user.id,email=user.email,password=user.password,name=user.name,
+                           created_date=user.created_date,
+                           last_login_date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")).save()
                 return {"status": "ok", "data": {"token": token, "expire": expire_date}}
             else:
                 return {"status": "error", "reason": "no user with this email"}
