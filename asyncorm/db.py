@@ -58,7 +58,7 @@ class Database():
         res_d = [class_(**dict(zip(res_desc, res_tuple[i]))) for i in range(len(res_tuple))]
         return res_d
 
-    async def query_constructor(self, query, table, cond,fk=None, id=None):
+    async def query_constructor(self, query, table, cond,id=None,fk=None, ):
         if query.startswith('SELECT'):
             params = ['{}="{}"'.format(x, y) for x, y in cond.items()]
             params = (" AND ".join(params))
@@ -71,7 +71,7 @@ class Database():
             values = str(values_list)[1:-1]
             return query.format(table, columns, values)
         elif query.startswith('DELETE'):
-            return await query.format(table, cond)
+            return query.format(table, cond)
         elif query.startswith('UPDATE'):
             col_vals = ["{}='{}'".format(x, y) for x, y in cond.items()]
             col_vals = (",".join(col_vals))

@@ -32,8 +32,7 @@ class Manage:
         self.model_cls = None
 
     def __get__(self, instance, owner):
-        if self.model_cls is None:
-            self.model_cls = owner
+        self.model_cls = owner
         setattr(self, '_table_name', owner._table_name)
         return self
 
@@ -49,7 +48,7 @@ class Manage:
     async def get(self, **kwargs):
         query = 'SELECT * FROM {} WHERE {}'
         get_query = await db.query_constructor(query, self._table_name, kwargs)
-        print(get_query)
+        # print(get_query)
         res = await db.parse(get_query, self.model_cls)
         if len(res) > 1:
             raise MultyplyObjectReturn('The query respons Multyply object')
@@ -127,13 +126,13 @@ class Model(metaclass=ModelMeta):
                 dict_t[field_name] = getattr(self, field_name)
         if self.__dict__.get('id'):
             query = 'UPDATE {} SET {} WHERE id={};'
-            update_query = await db.query_constructor(query, self._table_name, dict_t, self.id)
-            print(update_query)
+            update_query = await db.query_constructor(query, self._table_name, dict_t,id= self.id)
+            print(self.id,update_query)
             await db.execute(update_query)
             await db.commit()
         else:
             query = 'INSERT INTO {} ({}) VALUES ({});'
-            create_query = db.query_constructor(query, self._table_name, dict_t)
+            create_query = await db.query_constructor(query, self._table_name, dict_t)
             await db.execute(create_query)
             await db.commit()
             await db.execute('select last_insert_id();')
