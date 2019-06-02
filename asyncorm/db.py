@@ -82,5 +82,4 @@ class Database():
             table_name = table.__name__
             sub_query = [',FOREIGN KEY ({}) REFERENCES {}(id)'.format(x, y) for x, y in fk.items()]
             sub_query = (",".join(sub_query))
-            print(sub_query)
             return query.format(table_name, par_type_lst,sub_query)

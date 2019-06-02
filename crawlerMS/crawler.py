@@ -6,9 +6,6 @@ from aioelasticsearch import Elasticsearch
 from bs4 import BeautifulSoup
 
 
-# start_url = 'http://fargo-online.net/'
-# index_url = start_url.translate({ord(i): None for i in """"[*\>:\<'"|/?]"""})
-
 
 class Crowler:
     def __init__(self, url, rps):

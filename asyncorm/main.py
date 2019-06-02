@@ -5,7 +5,6 @@ from asyncorm.utils import connection_loop
 import datetime
 
 class User(Model):
-    # id = IntField()
     email = StringField(blank=False)
     password = StringField(blank=False)
     name = StringField(blank=False)
@@ -21,7 +20,6 @@ class Token(Model):
 class CrawlerStats(Model):
     domain = StringField(blank=False)
     author_id = ForeignKey(references=User)
-    https = BooleanField(blank=False)
     time = DateField(blank=False)
     pages_count = IntField(blank=False)
     avg_time_per_page = FloatField(blank=False)

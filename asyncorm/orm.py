@@ -109,13 +109,11 @@ class Model(metaclass=ModelMeta):
                 fk[x] = y.references.__name__
         query = "CREATE TABLE IF NOT EXISTS {} (id INT AUTO_INCREMENT, {}, PRIMARY KEY (id){});"
         create_table_query = await db.query_constructor(query, cls, sql_types, fk=fk)
-        print(create_table_query)
         await db.execute(create_table_query)
         await db.commit()
 
     async def delete(self):
         query = 'DELETE FROM {} WHERE id={}'.format(self._table_name, self.id)
-        print(query)
         await db.execute(query)
         await db.commit()
 
@@ -127,7 +125,6 @@ class Model(metaclass=ModelMeta):
         if self.__dict__.get('id'):
             query = 'UPDATE {} SET {} WHERE id={};'
             update_query = await db.query_constructor(query, self._table_name, dict_t,id= self.id)
-            print(self.id,update_query)
             await db.execute(update_query)
             await db.commit()
         else:

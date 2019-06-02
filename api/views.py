@@ -4,7 +4,7 @@ from aioelasticsearch import Elasticsearch
 from aiohttp import web
 
 from asyncorm.main import CrawlerStats
-from authorization.interface import AuthInterface
+from authorizationMS.interface import AuthInterface
 from crawlerMS.interface import CrawlerInterface
 
 auth = AuthInterface()
